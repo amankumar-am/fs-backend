@@ -3,6 +3,7 @@ const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
 const roleRoutes = require('./routes/roleRoutes');
 const menuRoutes = require('./routes/menuRoutes');
+const loginRoutes = require('./routes/loginRoutes');
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json()); // For parsing application/json
 app.use('/users', userRoutes);
 app.use('/roles', roleRoutes);
 app.use('/menus', menuRoutes);
+app.use('/login', loginRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
