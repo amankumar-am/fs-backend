@@ -15,12 +15,16 @@ app.use(express.json()); // For parsing application/json
 app.use('/users', userRoutes);
 app.use('/roles', roleRoutes);
 app.use('/menus', menuRoutes);
-app.use('/login', loginRoutes);
+app.use('/api', loginRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).send('Something broke!');
+    res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+        error: err.message
+    });
 });
 
 // Start the server

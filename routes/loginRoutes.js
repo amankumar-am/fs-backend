@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const { poolPromise } = require('../config/db');
 
 // Login Route
-router.post("", async (req, res) => {
+router.post("/login", async (req, res) => {
     try {
         const { loginID, password } = req.body;
 
