@@ -6,16 +6,17 @@ const menuRoutes = require('./routes/menuRoutes');
 const loginRoutes = require('./routes/loginRoutes');
 
 const app = express();
-
+require('events').EventEmitter.defaultMaxListeners = 15;
 // Middleware
 app.use(cors());
 app.use(express.json()); // For parsing application/json
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/users', userRoutes);
 app.use('/roles', roleRoutes);
-app.use('/menus', menuRoutes);
-app.use('/api', loginRoutes);
+app.use('/api/menus', menuRoutes);
+app.use('/', loginRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
