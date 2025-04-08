@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { poolPromise } = require('../config/db');
+const roleService = require("../services/role.service")
+// Get all roles
 
-// Get all users
 router.get('/', async (req, res) => {
     try {
-        const pool = await poolPromise;
-        const result = await pool.request().query('SELECT * FROM RoleMaster');
+        const result = await roleService.getAllRoles();
         res.json(result.recordset);
     } catch (err) {
         console.error('SQL error', err);

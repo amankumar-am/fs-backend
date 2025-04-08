@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/users', userRoutes);
-app.use('/roles', roleRoutes);
+app.use('/api/roles', roleRoutes);
 app.use('/api/menus', menuRoutes);
 app.use('/', loginRoutes);
 

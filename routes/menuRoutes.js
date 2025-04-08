@@ -4,15 +4,33 @@ const menuService = require("../services/menu.service")
 const { authenticateUser } = require("../middleware/authMiddleware")
 // Get all users
 
-router.get('/', async (req, res) => {
+// router.get('/', async (req, res) => {
+//     try {
+//         const result = await menuService.getAllMenus();
+//         res.json(result.recordset);
+//     } catch (err) {
+//         console.error('SQL error', err);
+//         res.status(500).json({ error: 'Database error' });
+//     }
+// });
+
+
+router.get('/', authenticateUser, async (req, res) => {
     try {
-        const result = await menuService.getAllMenus();
+        const result = await menuService.getAllMenus2(req.user.user_id);
+        console.log(result.recordset);
+
         res.json(result.recordset);
-    } catch (err) {
-        console.error('SQL error', err);
-        res.status(500).json({ error: 'Database error' });
+    } catch (error) {
+        const statusCode = error.message.includes('required') ? 400 : 500;
+        res.status(statusCode).json({
+            success: false,
+            message: error.message || 'Failed to create menu item'
+        });
     }
 });
+
+
 
 router.get('/:id', async (req, res) => {
     const menuRecord = await menuService.getMenuById(req.params.id);
@@ -30,7 +48,6 @@ router.post('/', authenticateUser, async (req, res) => {
             CreatedBy: req.user.loginID // or req.user.id depending on what you need
         };
         const result = await menuService.addMenuItem(menuDataWithUser);
-        console.log(result);
 
         res.status(201).json({
             success: true,
@@ -57,6 +74,20 @@ router.put('/:id', authenticateUser, async (req, res) => {
         await menuService.updateMenuItem(
             req.params.id,
             updateDataWithUser
+        );
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+router.delete('/delete/:id', authenticateUser, async (req, res) => {
+    try {
+        await menuService.deleteMenuItem(
+            req.params.id,
         );
         res.json({ success: true });
     } catch (error) {
