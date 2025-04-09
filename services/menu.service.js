@@ -10,8 +10,8 @@ module.exports.getAllMenus = async () => {
 module.exports.getAllMenus2 = async (req, res) => {
     const pool = await poolPromise;
     const records = await pool.request()
-        // .query('SELECT * FROM MenuMaster');
-        .query('SELECT mn.MN_Id, mn.MN_Name, mn.MN_Path, mn.MN_Icon, mn.MN_Category from MenuMaster as mn')
+        .input('user_id', sql.Int, req.user_id)
+        .execute('GetUserMenu')
     return records;
 }
 

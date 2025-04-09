@@ -14,19 +14,14 @@ const { authenticateUser } = require("../middleware/authMiddleware")
 //     }
 // });
 
-
+// '/api/menus'
 router.get('/', authenticateUser, async (req, res) => {
     try {
-        const result = await menuService.getAllMenus2(req.user.user_id);
-        console.log(result.recordset);
-
-        res.json(result.recordset);
+        const result = await menuService.getAllMenus2(req.user);
+        res.status(200).json(result.recordset);
     } catch (error) {
-        const statusCode = error.message.includes('required') ? 400 : 500;
-        res.status(statusCode).json({
-            success: false,
-            message: error.message || 'Failed to create menu item'
-        });
+        console.error('Error executing stored procedure:', error);
+        res.status(500).json({ error: 'Failed to get menus' });
     }
 });
 

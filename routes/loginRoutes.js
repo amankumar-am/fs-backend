@@ -13,18 +13,18 @@ router.post("/login/auth", async (req, res) => {
         const result = await pool
             .request()
             .input("loginID", sql.VarChar, loginID)
-            .query("SELECT * FROM UserMaster WHERE UMST_LoginID = @loginID");
+            .query("SELECT * FROM UserMaster WHERE USM_LoginID = @loginID");
 
         if (result.recordset.length === 0) {
             return res.status(401).json({ message: "Invalid credentials" });
         }
 
         const user = result.recordset[0];
-        const userPassword = user.UMST_Password.trim();
+        const userPassword = user.USM_Password.trim();
         const enteredPassword = password.trim();
 
         if (enteredPassword === userPassword) {
-            const token = jwt.sign({ user_id: user.UMST_Id }, process.env.JWT_SECRET || "defaultSecret", { expiresIn: "1h" });
+            const token = jwt.sign({ user_id: user.USM_Id }, process.env.JWT_SECRET || "defaultSecret", { expiresIn: "1h" });
 
             return res.json({ message: "Login successful", token, user });
         } else {
