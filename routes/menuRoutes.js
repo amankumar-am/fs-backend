@@ -4,28 +4,16 @@ const menuService = require("../services/menu.service")
 const { authenticateUser } = require("../middleware/authMiddleware")
 // Get all users
 
-// router.get('/', async (req, res) => {
-//     try {
-//         const result = await menuService.getAllMenus();
-//         res.json(result.recordset);
-//     } catch (err) {
-//         console.error('SQL error', err);
-//         res.status(500).json({ error: 'Database error' });
-//     }
-// });
-
 // '/api/menus'
 router.get('/', authenticateUser, async (req, res) => {
     try {
-        const result = await menuService.getAllMenus2(req.user);
+        const result = await menuService.getAllMenus(req.user);
         res.status(200).json(result.recordset);
     } catch (error) {
         console.error('Error executing stored procedure:', error);
         res.status(500).json({ error: 'Failed to get menus' });
     }
 });
-
-
 
 router.get('/:id', async (req, res) => {
     const menuRecord = await menuService.getMenuById(req.params.id);
@@ -36,11 +24,20 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+router.get('/checkNameExits/:name', async (req, res) => {
+    const menuRecord = await menuService.checkMenuNameExists(req.params.name);
+    if (menuRecord.length !== 0) {
+        res.status(200).json(`This name exists in the menu list already. Please change.`);
+    } else {
+        res.status(200).json('unique name');
+    }
+})
+
 router.post('/', authenticateUser, async (req, res) => {
     try {
         const menuDataWithUser = {
             ...req.body,
-            CreatedBy: req.user.loginID // or req.user.id depending on what you need
+            CreatedBy: req.user.loginID
         };
         const result = await menuService.addMenuItem(menuDataWithUser);
 
