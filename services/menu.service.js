@@ -168,11 +168,17 @@ module.exports.deleteMenuItem = async (id) => {
     }
 };
 
+module.exports.checkMenuNameExists = async (name) => {
+    try {
+        const pool = await poolPromise;
+        const result = await pool.request()
+            .input('name', sql.VarChar, name)
+            .query('SELECT MN_Name FROM MenuMaster WHERE MN_Name = @name');
 
-module.exports.checkMenuNameExists = async (req, res) => {
-    const pool = await poolPromise;
-    const record = await pool.request()
-        .input('name', sql.Int, req.name)
-        .query('SELECT * FROM MenuMaster WHERE MN_Name = @name');
-    return record
-}
+        // Return true if any records found, false otherwise
+        return result.recordset.length > 0;
+    } catch (error) {
+        console.error('Database error:', error);
+        throw error;
+    }
+};

@@ -24,14 +24,33 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.get('/checkNameExits/:name', async (req, res) => {
-    const menuRecord = await menuService.checkMenuNameExists(req.params.name);
-    if (menuRecord.length !== 0) {
-        res.status(200).json(`This name exists in the menu list already. Please change.`);
-    } else {
-        res.status(200).json('unique name');
+
+router.get('/checkNameExists/:name', async (req, res) => {
+    try {
+        const name = req.params.name;
+
+        // Basic validation
+        if (!name || typeof name !== 'string' || name.trim() === '') {
+            return res.status(400).json({
+                exists: false,
+                message: 'Name is required'
+            });
+        }
+        const exists = await menuService.checkMenuNameExists(name);
+        res.status(200).json({
+            exists: exists,
+            message: exists
+                ? 'This name already exists'
+                : 'Name is available'
+        });
+    } catch (error) {
+        console.error('Error checking name:', error);
+        res.status(500).json({
+            exists: false, // Default to false on error
+            message: 'Error checking name availability'
+        });
     }
-})
+});
 
 router.post('/', authenticateUser, async (req, res) => {
     try {
